@@ -1,7 +1,11 @@
 const express = require('express')
+const exphbs = require('express-handlebars')
 const mongoose = require('mongoose') // 載入 mongoose
 const app = express()
 const port = 3000
+
+app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
+app.set('view engine', 'hbs')
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }) // 設定連線到 mongoDB
 
@@ -17,7 +21,7 @@ db.once('open', () => {
 })
 
 app.get('/', (req, res) => {
-  res.send('Hello World!')
+  res.render('index')
 })
 
 app.listen(port, () => {
