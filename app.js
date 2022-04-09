@@ -35,6 +35,7 @@ app.set('view engine', 'hbs')
 // 用 app.use 規定每一筆請求都需要透過 body-parser 進行前置處理
 app.use(bodyParser.urlencoded({ extended: true }))
 
+// 根目錄頁面
 app.get('/', (req, res) => {
   Todo.find() // 取出 Todo model 裡的所有資料
     .lean() // 把 Mongoose 的 Model 物件轉換成乾淨的 JavaScript 資料陣列
@@ -42,10 +43,12 @@ app.get('/', (req, res) => {
     .catch(error => console.error(error)) // 錯誤處理
 })
 
+// 新增 todo 的頁面
 app.get('/todos/new', (req, res) => {
   return res.render('new')
 })
 
+// 新增 todo 給資料庫再拿回來
 app.post('/todos', (req, res) => {
   // 從 req.body 拿出表單裡的 name 資料
   const name = req.body.name
@@ -53,6 +56,15 @@ app.post('/todos', (req, res) => {
   return Todo.create({ name })
     // 新增完成後導回首頁
     .then(() => res.redirect('/'))
+    .catch(error => console.log(error))
+})
+
+// 瀏覽個別 todo 的資料
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id
+  return Todo.findById(id)
+    .lean()
+    .then(todo => res.render('detail', { todo }))
     .catch(error => console.log(error))
 })
 
