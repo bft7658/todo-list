@@ -35,6 +35,7 @@ app.set('view engine', 'hbs')
 // 用 app.use 規定每一筆請求都需要透過 body-parser 進行前置處理
 app.use(bodyParser.urlencoded({ extended: true }))
 
+
 // 根目錄頁面
 app.get('/', (req, res) => {
   Todo.find() // 取出 Todo model 裡的所有資料
@@ -43,12 +44,12 @@ app.get('/', (req, res) => {
     .catch(error => console.error(error)) // 錯誤處理
 })
 
-// 新增 todo 的頁面
+// 取得新增 todo 的頁面
 app.get('/todos/new', (req, res) => {
   return res.render('new')
 })
 
-// 接收 todo 後，傳入資料庫再拿回來
+// 新增資料，寫入資料庫
 app.post('/todos', (req, res) => {
   // 從 req.body 拿出表單裡的 name 資料
   const name = req.body.name
@@ -59,7 +60,7 @@ app.post('/todos', (req, res) => {
     .catch(error => console.log(error))
 })
 
-// 瀏覽個別 todo 的資料
+// 取得瀏覽個別 todo 資料的頁面
 app.get('/todos/:id', (req, res) => {
   const id = req.params.id
   return Todo.findById(id)
@@ -68,7 +69,7 @@ app.get('/todos/:id', (req, res) => {
     .catch(error => console.log(error))
 })
 
-// 修改特定 todo
+// 取得修改 todo 頁面
 app.get('/todos/:id/edit', (req, res) => {
   const id = req.params.id
   return Todo.findById(id)
@@ -77,7 +78,7 @@ app.get('/todos/:id/edit', (req, res) => {
     .catch(error => console.log(error))
 })
 
-// 接收修改 todo 後，傳入資料庫再拿回來
+// 修改資料，寫入資料庫
 app.post('/todos/:id/edit', (req, res) => {
   const id = req.params.id
   const name = req.body.name
@@ -89,6 +90,16 @@ app.post('/todos/:id/edit', (req, res) => {
     .then(() => res.redirect(`/todos/${id}`))
     .catch(error => console.log(error))
 })
+
+// 刪除資料，寫入資料庫
+app.post('/todos/:id/delete', (req, res) => {
+  const id = req.params.id
+  return Todo.findById(id)
+    .then(todo => todo.remove())
+    .then(() => res.redirect('/'))
+    .catch(error => console.log(error))
+})
+
 
 app.listen(port, () => {
   console.log(`App is running on http://localhost:${port}`)
