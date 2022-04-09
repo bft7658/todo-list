@@ -48,7 +48,7 @@ app.get('/todos/new', (req, res) => {
   return res.render('new')
 })
 
-// 新增 todo 給資料庫再拿回來
+// 接收 todo 後，傳入資料庫再拿回來
 app.post('/todos', (req, res) => {
   // 從 req.body 拿出表單裡的 name 資料
   const name = req.body.name
@@ -65,6 +65,28 @@ app.get('/todos/:id', (req, res) => {
   return Todo.findById(id)
     .lean()
     .then(todo => res.render('detail', { todo }))
+    .catch(error => console.log(error))
+})
+
+// 修改特定 todo
+app.get('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  return Todo.findById(id)
+    .lean()
+    .then(todo => res.render('edit', { todo }))
+    .catch(error => console.log(error))
+})
+
+// 接收修改 todo 後，傳入資料庫再拿回來
+app.post('/todos/:id/edit', (req, res) => {
+  const id = req.params.id
+  const name = req.body.name
+  return Todo.findById(id)
+    .then(todo => {
+      todo.name = name
+      return todo.save()
+    })
+    .then(() => res.redirect(`/todos/${id}`))
     .catch(error => console.log(error))
 })
 
