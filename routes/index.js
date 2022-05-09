@@ -9,8 +9,8 @@ const users = require('./modules/users')
 // 掛載 middleware
 const { authenticator } = require('../middleware/auth')
 
-
-router.use('/todos', todos)
+// 加入驗證程序
+router.use('/todos', authenticator, todos)
 router.use('/users', users)
 // 加入驗證程序
 router.use('/', authenticator, home) 
