@@ -9,6 +9,13 @@ const todoSchema = new Schema({
   isDone: {
     type: Boolean,
     default: false
+  },
+  // 新增一個 userId 屬性，用這個屬性來連結 User 的唯一值 _id
+  userId: {  // 加入關聯設定
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    index: true,
+    required: true
   }
 })
 
