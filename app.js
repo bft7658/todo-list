@@ -5,9 +5,9 @@ const exphbs = require('express-handlebars')
 const usePassport = require('./config/passport')
 // 引用 body-parser
 const bodyParser = require('body-parser')
-
 // 載入 method-override
 const methodOverride = require('method-override') 
+const flash = require('connect-flash')   
 
 // 引用路由器，路徑設定為 /routes 就會自動去尋找目錄下叫做 index 的檔案
 const routes = require('./routes')
@@ -33,10 +33,13 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 // 呼叫 Passport 函式並傳入 app，這條要寫在路由之前
 usePassport(app)
+app.use(flash())
 // 設定本地變數 res.locals
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated()
   res.locals.user = req.user
+  res.locals.success_msg = req.flash('success_msg')  // 設定 success_msg 訊息
+  res.locals.warning_msg = req.flash('warning_msg')  // 設定 warning_msg 訊息
   next()
 })
 // 將 request 導入路由器
